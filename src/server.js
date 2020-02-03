@@ -4,6 +4,9 @@ var {
   buildSchema
 } = require('graphql');
 
+//https://stackoverflow.com/questions/57640113/cors-it-does-not-have-http-ok-status
+
+
 
 const schema = buildSchema(`
   type Query {
@@ -131,6 +134,26 @@ const root = {
 
 
 const app = express();
+
+app.all('*', function(req, res, next) {
+    //res.header("Access-Control-Allow-Origin", "http://localhost");
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
+    // res.header('Access-Control-Allow-Credentials', true) 
+    res.header('Connection', "Keep-Alive");
+    res.header("X-Powered-By",' 3.2.1')
+    if(req.method=="OPTIONS"){
+      res.send(200);/*让options请求快速返回*/
+    } else{
+      next();  
+    }
+    
+    //Auth Each API Request created by user.
+
+    //next();
+});
+
 app.use('/graphql', graphqlHTTP({
   schema: schema,
   rootValue: root,
